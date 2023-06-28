@@ -199,7 +199,10 @@ def sample_level(zs, labels, sampling_kwargs, level, prior, total_length, hop_le
 # Sample multiple levels
 def _sample(zs, labels, sampling_kwargs, priors, sample_levels, hps, device='cuda', do_level_zero=True):
     alignments = None
+
     for level in reversed(sample_levels):
+
+        print( '!! do_level_zero is ' + str( do_level_zero ) + ' cur level is ' + str( level ) + ' !!' )
 
         if level == 0 and do_level_zero == False:
             print( '!! Skipping level 0 upsample !!' )
