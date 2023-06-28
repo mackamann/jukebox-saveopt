@@ -197,9 +197,14 @@ def sample_level(zs, labels, sampling_kwargs, level, prior, total_length, hop_le
     return zs
 
 # Sample multiple levels
-def _sample(zs, labels, sampling_kwargs, priors, sample_levels, hps, device='cuda'):
+def _sample(zs, labels, sampling_kwargs, priors, sample_levels, hps, device='cuda', do_level_0=True):
     alignments = None
     for level in reversed(sample_levels):
+
+        if level == 0 and do_level_0 == False:
+            print( '!! Skipping level 0 upsample !!' )
+            return None
+
         prior = priors[level]
         prior.c_to(device)
         empty_cache()
@@ -253,9 +258,9 @@ def continue_sample(zs, labels, sampling_kwargs, priors, hps):
     return zs
 
 # Upsample given already generated upper-level codes
-def upsample(zs, labels, sampling_kwargs, priors, hps):
+def upsample(zs, labels, sampling_kwargs, priors, hps, do_level_zero=True):
     sample_levels = list(range(len(priors) - 1))
-    zs = _sample(zs, labels, sampling_kwargs, priors, sample_levels, hps)
+    zs = _sample(zs, labels, sampling_kwargs, priors, sample_levels, hps, do_level_zero=do_level_zero)
     return zs
 
 # Prompt the model with raw audio input (dimension: NTC) and generate continuations
